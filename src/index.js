@@ -38,45 +38,46 @@ const MORSE_TABLE = {
 };
 
 function decode(expr) {
-    let arrNumbers = [],
-        temp = [];
-    let arr = expr.split('');
+    let strArr = [];
+    let str = '';
 
-    for (let i = 0; i < arr.length; i += 10) {
-        for (let j = i; j < i + 10; j++) {
-            temp.push(arr[j])
+    for (let i = 0; i < expr.length; i += 10) {
+        if (i == expr.length) {
+            break;
+        } else {
+            strArr.push(expr.slice(i, i + 10));
         }
-        arrNumbers.push(temp);
-        temp = [];
     }
 
-    let arrLetters = [];
+    strArr.forEach(arr => {
+        let strWord = [];
 
-    for (let i = 0; i < arrNumbers.length; i++) {
-        if (arrNumbers[i][0] != '*') {
-            for (let j = 0; j < arrNumbers[i].length; j += 2) {
-                temp += ((arrNumbers[i][j] + arrNumbers[i][j + 1] == '10') ? '.' : (arrNumbers[i][j] + arrNumbers[i][j + 1] == '11') ? '-' : '');
+        Loop: for (let i = 0; i < arr.length; i += 2) {
+
+            switch (arr.slice(i, i + 2)) {
+                case '10':
+                    strWord.push('.')
+                    break;
+                case '11':
+                    strWord.push('-');
+                    break;
+                case '**':
+                    strWord.push(' ');
+                    break Loop;
             }
-            arrLetters.push(temp);
-            temp = '';
-        } else {
-            arrLetters.push(' ');
-            continue;
+
         }
-    }
 
-    let retWord = '';
-
-    for (let i = 0; i < arrLetters.length; i++) {
-        if (arrLetters[i] != ' ') {
-            retWord += MORSE_TABLE[arrLetters[i]];
+        if (strWord == ' ') {
+            str += ' ';
         } else {
-            retWord += ' ';
+            str += MORSE_TABLE[strWord.join('')];
         }
-    }
 
-    return retWord;
 
+    })
+
+    return str;
 }
 
 module.exports = {
